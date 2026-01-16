@@ -1,0 +1,16 @@
+{
+  "name": "server-start-from-discord",
+  "version": "1.0.0",
+  "description": "AWS Lambda to monitor Discord voice channel and control EC2 instance",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "zip": "zip -r function.zip index.js package.json node_modules"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@aws-sdk/client-ec2": "^3.316.0",
+    "discord.js": "^14.9.0"
+  }
+}
