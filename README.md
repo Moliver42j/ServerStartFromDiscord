@@ -30,8 +30,13 @@ Monitors a Discord voice channel and starts/stops an EC2 instance based on wheth
 
 ## Deploy
 
+Prereqs: `aws` (AWS CLI), `node`/`npm`, and `zip`.
+
 ```bash
-npm install
-npm run zip
-# Upload function.zip to Lambda
+make package
+# or deploy directly:
+make deploy FUNCTION_NAME=your-lambda-function-name
+
+# Optional:
+# make deploy FUNCTION_NAME=your-lambda-function-name AWS_REGION=eu-west-1 AWS_PROFILE=default PUBLISH=1
 ```
