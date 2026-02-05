@@ -1,11 +1,11 @@
-const { Client, GatewayIntentBits } = require('discord.js');
+const { Client, Intents } = require('discord.js');
 const { DISCORD_BOT_TOKEN, DISCORD_GUILD_ID, DISCORD_CHANNEL_NAME } = require('./config');
 
 const SERVER_MESSAGES_CHANNEL = 'server-messages';
 
 async function checkVoiceChannel() {
   const client = new Client({
-    intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildVoiceStates]
+    intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_VOICE_STATES]
   });
 
   return new Promise((resolve, reject) => {
@@ -19,7 +19,8 @@ async function checkVoiceChannel() {
         const guild = client.guilds.cache.get(DISCORD_GUILD_ID);
         if (!guild) throw new Error(`Guild not found: ${DISCORD_GUILD_ID}`);
 
-        const channel = guild.channels.cache.find(ch => ch.name === DISCORD_CHANNEL_NAME && ch.isVoiceBased());
+        // Voice channel types in discord.js v13: GUILD_VOICE = 'GUILD_VOICE', GUILD_STAGE_VOICE = 'GUILD_STAGE_VOICE'
+        const channel = guild.channels.cache.find(ch => ch.name === DISCORD_CHANNEL_NAME && (ch.type === 'GUILD_VOICE' || ch.type === 'GUILD_STAGE_VOICE'));
         if (!channel) throw new Error(`Channel not found: ${DISCORD_CHANNEL_NAME}`);
 
         const count = channel.members.size;
@@ -47,7 +48,7 @@ async function checkVoiceChannel() {
 
 async function sendServerMessage(message) {
   const client = new Client({
-    intents: [GatewayIntentBits.Guilds]
+    intents: [Intents.FLAGS.GUILDS]
   });
 
   return new Promise((resolve, reject) => {
@@ -61,7 +62,7 @@ async function sendServerMessage(message) {
         const guild = client.guilds.cache.get(DISCORD_GUILD_ID);
         if (!guild) throw new Error(`Guild not found: ${DISCORD_GUILD_ID}`);
 
-        const channel = guild.channels.cache.find(ch => ch.name === SERVER_MESSAGES_CHANNEL && ch.isTextBased());
+        const channel = guild.channels.cache.find(ch => ch.name === SERVER_MESSAGES_CHANNEL);
         if (!channel) throw new Error(`Channel not found: ${SERVER_MESSAGES_CHANNEL}`);
 
         await channel.send(message);

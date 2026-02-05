@@ -1,6 +1,5 @@
 const { EC2Client, DescribeInstancesCommand, StartInstancesCommand, StopInstancesCommand } = require('@aws-sdk/client-ec2');
 const { EC2_INSTANCE_ID, AWS_REGION } = require('./config');
-const { sendServerMessage } = require('./discord');
 
 const ec2 = new EC2Client({ region: AWS_REGION });
 
@@ -16,10 +15,17 @@ async function startInstance() {
     return { action: 'start', status: state };
   }
 
-  await ec2.send(new StartInstancesCommand({ InstanceIds: [EC2_INSTANCE_ID] }));
-  console.log('Instance started');
-  await sendServerMessage('Start signal sent to the server! ✅');
-  return { action: 'start', status: 'started' };
+  try {
+    await ec2.send(new StartInstancesCommand({ InstanceIds: [EC2_INSTANCE_ID] }));
+    console.log('Instance started');
+    return { action: 'start', status: 'started' };
+  } catch (err) {
+    if (err.name === 'IncorrectInstanceState') {
+      console.log(`Cannot start instance: ${err.message}`);
+      return { action: 'start', status: 'invalid-state', error: 'Server is not in a state where it can be started. Please try again in a moment.' };
+    }
+    throw err;
+  }
 }
 
 async function stopInstance() {
@@ -29,10 +35,17 @@ async function stopInstance() {
     return { action: 'stop', status: state };
   }
 
-  await ec2.send(new StopInstancesCommand({ InstanceIds: [EC2_INSTANCE_ID] }));
-  console.log('Instance stopped');
-  await sendServerMessage('Stop signal sent to the server! ❌');
-  return { action: 'stop', status: 'stopped' };
+  try {
+    await ec2.send(new StopInstancesCommand({ InstanceIds: [EC2_INSTANCE_ID] }));
+    console.log('Instance stopped');
+    return { action: 'stop', status: 'stopped' };
+  } catch (err) {
+    if (err.name === 'IncorrectInstanceState') {
+      console.log(`Cannot stop instance: ${err.message}`);
+      return { action: 'stop', status: 'invalid-state', error: 'Server is not in a state where it can be stopped. Please try again in a moment.' };
+    }
+    throw err;
+  }
 }
 
 module.exports = { startInstance, stopInstance };

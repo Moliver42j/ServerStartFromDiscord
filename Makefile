@@ -7,6 +7,8 @@ BUILD_DIR := .build
 DIST_DIR := dist
 ZIP_FILE := $(DIST_DIR)/function.zip
 
+FUNCTION_NAME := discordBot
+
 # Usage:
 #   make deploy FUNCTION_NAME=my-lambda-name [AWS_REGION=eu-west-1] [AWS_PROFILE=default]
 AWS_REGION ?= eu-west-1
