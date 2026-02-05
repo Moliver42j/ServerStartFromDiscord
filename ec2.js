@@ -1,5 +1,6 @@
 const { EC2Client, DescribeInstancesCommand, StartInstancesCommand, StopInstancesCommand } = require('@aws-sdk/client-ec2');
 const { EC2_INSTANCE_ID, AWS_REGION } = require('./config');
+const { sendServerMessage } = require('./discord');
 
 const ec2 = new EC2Client({ region: AWS_REGION });
 
@@ -17,6 +18,7 @@ async function startInstance() {
 
   await ec2.send(new StartInstancesCommand({ InstanceIds: [EC2_INSTANCE_ID] }));
   console.log('Instance started');
+  await sendServerMessage('Start signal sent to the server! ✅');
   return { action: 'start', status: 'started' };
 }
 
@@ -29,6 +31,7 @@ async function stopInstance() {
 
   await ec2.send(new StopInstancesCommand({ InstanceIds: [EC2_INSTANCE_ID] }));
   console.log('Instance stopped');
+  await sendServerMessage('Stop signal sent to the server! ❌');
   return { action: 'stop', status: 'stopped' };
 }
 
