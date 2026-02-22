@@ -19,8 +19,7 @@ Monitors a Discord voice channel and starts/stops an EC2 instance based on wheth
 | `AWS_REGION` | Optional, defaults to `eu-west-1` |
 
 ## IAM Permissions
-
-```json
+sa sada das 
 {
   "Effect": "Allow",
   "Action": ["ec2:DescribeInstances", "ec2:StartInstances", "ec2:StopInstances"],
